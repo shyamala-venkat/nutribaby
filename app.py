@@ -2,35 +2,23 @@
 
 import logging
 
-import streamlit as st
 from dotenv import load_dotenv
 
-load_dotenv()  # must run before any src imports that use the client
+load_dotenv()
 
-from src.llm.client import chat  # noqa: E402
-from src.llm.prompts import HELLO_WORLD_SYSTEM  # noqa: E402
+import streamlit as st  # noqa: E402
+
+from src.ui import analysis, home, log_meal  # noqa: E402
 
 logging.basicConfig(level=logging.INFO)
 
 st.set_page_config(page_title="NutriBaby", page_icon="🍼", layout="centered")
 
-st.title("🍼 NutriBaby")
-st.caption("Learning project — not medical advice. Consult your pediatrician.")
-st.divider()
-
-st.subheader("Claude connection test")
-user_input = st.text_input(
-    "Ask NutriBaby anything:",
-    placeholder="e.g. What foods are good for a 9-month-old?",
+pg = st.navigation(
+    [
+        st.Page(home.render, title="Baby Profiles", icon="👶"),
+        st.Page(log_meal.render, title="Log Meal", icon="🍽️"),
+        st.Page(analysis.render, title="Analysis", icon="📊"),
+    ]
 )
-
-if st.button("Send", disabled=not user_input):
-    with st.spinner("Thinking…"):
-        try:
-            reply = chat(
-                messages=[{"role": "user", "content": user_input}],
-                system=HELLO_WORLD_SYSTEM,
-            )
-            st.success(reply)
-        except Exception as e:
-            st.error(f"Error: {e}")
+pg.run()
