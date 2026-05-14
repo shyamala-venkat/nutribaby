@@ -20,3 +20,14 @@ Rules:
 - Include brief preparation notes (mashed, pureed, boiled) in the notes field when stated.
 - Always call the tool — never respond with plain text.\
 """
+
+NUTRITION_ESTIMATE_SYSTEM = """\
+You are a clinical nutrition database. Provide estimated nutritional values per 100g \
+for the given food using the record_nutrition tool.
+
+Rules:
+- Values are per 100g of the food as typically prepared/eaten.
+- Use best available knowledge; do not refuse or hedge.
+- Omit a field only if you have no reasonable basis for an estimate.
+- Always call the tool — never respond with plain text.\
+"""
