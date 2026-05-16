@@ -154,7 +154,8 @@ def get_todays_food_items(
 
     Returns:
         List of dicts with keys: food_name, quantity, unit, meal_type,
-        calories_kcal, protein_g, iron_mg, source.
+        source, nutrition (full dict), plus convenience keys calories_kcal,
+        protein_g, iron_mg for backward compatibility.
     """
     with get_connection(db_path) as conn:
         rows = conn.execute(
@@ -172,17 +173,19 @@ def get_todays_food_items(
 
     result = []
     for row in rows:
-        nutrition = json.loads(row["nutrition_json"]) if row["nutrition_json"] else {}
+        nutrition: dict = json.loads(row["nutrition_json"]) if row["nutrition_json"] else {}
         result.append(
             {
                 "food_name": row["food_name"],
                 "quantity": row["quantity"],
                 "unit": row["unit"],
                 "meal_type": row["meal_type"],
+                "source": row["source"],
+                "nutrition": nutrition,
+                # convenience keys kept for log_meal.py totals
                 "calories_kcal": nutrition.get("calories_kcal"),
                 "protein_g": nutrition.get("protein_g"),
                 "iron_mg": nutrition.get("iron_mg"),
-                "source": row["source"],
             }
         )
     return result
